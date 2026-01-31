@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Product Dashboard</h1>
+        <div class="controls">
+            <input type="text" id="search" placeholder="Search by title...">
+            <select id="itemsPerPage">
+                <option value="5">5 per page</option>
+                <option value="10">10 per page</option>
+                <option value="20">20 per page</option>
+            </select>
+        </div>
+        <table id="productTable">
+            <thead>
+                <tr>
+                    <th id="sortName">Name</th>
+                    <th>Image</th>
+                    <th id="sortPrice">Price</th>
+                    <th>Description</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Data will be dynamically inserted here -->
+            </tbody>
+        </table>
+        <div class="pagination">
+            <button id="prevPage">Previous</button>
+            <span id="currentPage">1</span>
+            <button id="nextPage">Next</button>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
