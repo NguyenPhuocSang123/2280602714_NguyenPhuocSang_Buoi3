@@ -19,8 +19,10 @@ const renderTable = () => {
     const tableBody = document.querySelector('#productTable tbody');
     tableBody.innerHTML = '';
 
+    const keyword = document.querySelector('#search').value.toLowerCase();
+
     const filteredProducts = products
-        .filter(product => product.title.toLowerCase().includes(document.querySelector('#search').value.toLowerCase()))
+        .filter(product => product.title.toLowerCase().includes(keyword))
         .sort((a, b) => {
             if (sortDirection.name === 'asc') {
                 return a.title.localeCompare(b.title);
@@ -39,21 +41,49 @@ const renderTable = () => {
     const start = (currentPage - 1) * itemsPerPage;
     const paginatedProducts = filteredProducts.slice(start, start + itemsPerPage);
 
-    paginatedProducts.forEach(product => {
+    paginatedProducts.forEach((product, index) => {
         const row = document.createElement('tr');
+
+        const imagesHtml = product.images
+            .map(img => `<img src="${img}" style="width:100px;margin:5px;">`)
+            .join('');
+
+        const descId = `desc-${index}`;
+
         row.innerHTML = `
             <td>${product.title}</td>
-            <td><img src="${product.images[0]}" alt="${product.title}" style="width: 100px; height: auto;"></td>
+            <td>${imagesHtml}</td>
             <td>${product.price}</td>
-            <td>${product.description}</td>
+            <td class="description-column">
+                <button class="toggle-desc" data-id="${descId}">
+                    Xem mô tả
+                </button>
+                <div id="${descId}" style="display:none; margin-top:6px;">
+                    ${product.description || 'No description available'}
+                </div>
+            </td>
         `;
+
         tableBody.appendChild(row);
+    });
+
+    // Gắn sự kiện cho nút Xem mô tả
+    document.querySelectorAll('.toggle-desc').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const desc = document.getElementById(btn.dataset.id);
+            const isHidden = desc.style.display === 'none';
+
+            desc.style.display = isHidden ? 'block' : 'none';
+            btn.textContent = isHidden ? 'Ẩn mô tả' : 'Xem mô tả';
+        });
     });
 
     document.querySelector('#currentPage').textContent = currentPage;
     document.querySelector('#prevPage').disabled = currentPage === 1;
-    document.querySelector('#nextPage').disabled = currentPage === Math.ceil(filteredProducts.length / itemsPerPage);
+    document.querySelector('#nextPage').disabled =
+        currentPage === Math.ceil(filteredProducts.length / itemsPerPage);
 };
+
 
 document.querySelector('#search').addEventListener('input', renderTable);
 document.querySelector('#itemsPerPage').addEventListener('change', (e) => {
@@ -80,6 +110,17 @@ document.querySelector('#sortName').addEventListener('click', () => {
 document.querySelector('#sortPrice').addEventListener('click', () => {
     sortDirection.price = sortDirection.price === 'asc' ? 'desc' : 'asc';
     renderTable();
+});
+
+document.querySelector('#toggleDescription').addEventListener('click', () => {
+    const descriptionCells = document.querySelectorAll('#productTable td:nth-child(4), #productTable th:nth-child(4)');
+    descriptionCells.forEach(cell => {
+        if (cell.style.display === 'none') {
+            cell.style.display = '';
+        } else {
+            cell.style.display = 'none';
+        }
+    });
 });
 
 fetchProducts();
